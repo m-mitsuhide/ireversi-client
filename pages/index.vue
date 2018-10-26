@@ -15,35 +15,38 @@
           :key="i"
           :style="
           `width: ${$window.width/gridX}px;
-          background: ${putAbleCheck(i) ? '#0652DD': ''};
+          background: ${putAbleCheck(i)
+            ? '#0652DD' : getUserId(i) === currentUser ? 'rgba(0, 0, 0, 0.7)' : ''};
           cursor: ${putAbleCheck(i) ? 'pointer' : ''}`"
         >
           <div @click="send(i)">
             <div
               class="piece"
               v-if="getUserId(i)"
-              :style="getUserId(i) === currentUser ? 'background:#444;color:white' : ''"
-            > {{ getUserId(i) }}</div>
+              :style="getUserId(i) === currentUser
+                ? 'background:#fff;color: #444;'
+                : getUserColor(i)"
+            ></div>
           </div>
         </div>
       </div>
     </div>
 
-    <UserSelector
+    <!-- <UserSelector
       :number="number"
       :current="currentUser"
       @change="changeCurrentUser"
-    />
+    /> -->
 
-    <ResetButton v-if="!productionCheck" />
+    <!-- <ResetButton v-if="!productionCheck" /> -->
     <button class="minus btn" @click="zoomout"> - </button>
-    <button class="plus btn" @click="zoomin"> + </button>
+    <!-- <button class="plus btn" @click="zoomin"> + </button>
     <div v-if="!productionCheck">
       <button class="btn up" @click="moveUp"> ↑ </button>
       <button class="btn right" @click="moveRight"> → </button>
       <button class="btn down" @click="moveDown"> ↓ </button>
       <button class="btn left" @click="moveLeft"> ← </button>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -65,7 +68,7 @@ export default {
   mounted() {
     setInterval(async () => {
       this.getBoard();
-    }, this.productionCheck ? 300 : 1000);
+    }, this.productionCheck ? 300 : 50);
   },
   computed: {
     ...mapState([
@@ -108,6 +111,7 @@ export default {
         return (this.candidates.find(el => el.x === x && el.y === y));
       };
     },
+    getUserColor: getters => i => `background: hsl(${360 / 10 * getters.getUserId(i)}, 100%, 50%)`,
   },
   methods: {
     ...mapMutations(['increment', 'zoomout', 'zoomin', 'changeCurrentUser', 'setHalf', 'moveRight', 'moveLeft', 'moveUp', 'moveDown', 'setInitPos', 'gridMove', 'resetInitPos']),
@@ -211,7 +215,8 @@ body {
 
 .cell {
   display: inline-block;
-  border: 1px solid #313;
+  border-top: 1px solid #555;
+  border-left: 1px solid #555;
   vertical-align: bottom;
 }
 
@@ -233,7 +238,7 @@ body {
   justify-content: center;
   align-items: center;
   color:#444;
-  font-size:120%;
+  font-size:80%;
   font-weight: bold;
 }
 </style>
